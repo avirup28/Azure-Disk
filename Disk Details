@@ -1,0 +1,20 @@
+$Disks = Get-AzureRmDisk | where {$_.Managedby -like '/subscription*' }| select Name,ResourceGroupName,Sku
+
+foreach ($Disk in $Disks) {
+
+$Name = $Disk.Name
+$RG = $Disk.ResourceGroupName
+
+
+$Final = Get-AzureRmDisk -ResourceGroupName $RG -DiskName $Name | select Name,ResourceGroupName,ManagedBy
+
+$VM = $Final.ManagedBy
+
+$VmName = ($VM -split '/')[8]
+
+
+$Type = (Get-AzureRmDisk -ResourceGroupName $RG -DiskName $Name).Sku.Name
+
+Write-Host -Separator "                          ” $VmName $Final.Name $Type
+
+}
